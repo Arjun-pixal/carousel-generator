@@ -269,7 +269,7 @@ export default function CarouselGenerator() {
     for (let i = 0; i < slideNodes.length; i++) {
       const node = slideNodes[i] as HTMLElement;
       // eslint-disable-next-line no-await-in-loop
-      const canvas = await html2canvas(node, { backgroundColor: "#fff", scale: 2, width: 1080, height: 1080 });
+      const canvas = await html2canvas(node, { background: "#fff", scale: 2, width: 1080, height: 1080 } as any);
       const imgData = canvas.toDataURL("image/png");
       if (i > 0) pdf.addPage([1080, 1080], "landscape");
       pdf.addImage(imgData, "PNG", 0, 0, 1080, 1080);
@@ -390,8 +390,8 @@ export default function CarouselGenerator() {
                 type="submit"
                 disabled={!prompt.trim() || isGenerating}
                 className={`ml-3 px-4 py-2 rounded-lg font-bold text-white uppercase tracking-wide flex items-center justify-center whitespace-nowrap shadow-md transition-all duration-200 relative overflow-hidden ${!prompt.trim() || isGenerating
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "button-wave-bg hover:scale-105 focus:scale-105"
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "button-wave-bg hover:scale-105 focus:scale-105"
                   }`}
                 style={!prompt.trim() || isGenerating ? {} : {}}
               >
@@ -449,8 +449,8 @@ export default function CarouselGenerator() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id
-                        ? "bg-blue-100 text-blue-700"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                       }`}
                   >
                     <tab.icon className="w-4 h-4 mr-2" />
@@ -554,83 +554,78 @@ export default function CarouselGenerator() {
               )}
             </div>
           </div>
-          
+
         </div>
-        {/* Thumbnails Row (below both panels) */}
-        <div className="mt-4 w-full overflow-x-auto">
-          <div className="flex flex-row items-end space-x-2 md:space-x-4 pb-2 md:pb-4 scrollbar-hide bg-white/80 rounded-xl p-2 md:p-4 shadow-md min-w-[320px] md:min-w-[900px]">
-            {slides.map((slide, index) => (
-              <div
-                key={slide.id}
-                className={
-                  `
-                    relative flex-shrink-0 w-36 h-44 bg-white rounded-xl border flex flex-col items-center justify-between p-2
-                    transition-all duration-300 transform hover:scale-105 shadow
-                    ${index === selectedSlideIndex ? "ring-2 ring-blue-500 border-blue-500 shadow-lg" : "border-gray-200"}
-                    ${!slide.visible ? "opacity-60" : ""}
-                    cursor-pointer
-                  `
-                }
-                style={{ minWidth: 144, maxWidth: 144 }}
-                onClick={() => goToSlide(index)}
-              >
-                {/* Eye toggle */}
-                <button
-                  className="absolute top-2 right-2 text-gray-400 hover:text-blue-500 transition z-10"
-                  onClick={e => { e.stopPropagation(); toggleSlideVisibility(index); }}
-                  title={slide.visible ? "Hide slide" : "Show slide"}
-                >
-                  {slide.visible ? (
-                    // Eye open SVG
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  ) : (
-                    // Eye off SVG
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.269-2.943-9.543-7a9.96 9.96 0 012.181-3.307M9.88 9.88A3 3 0 0014.12 14.12M3 3l18 18" />
-                    </svg>
-                  )}
-                </button>
-                {/* Delete button */}
-                {slides.length > 1 && (
-                  <button
-                    className="absolute top-2 left-2 text-gray-400 hover:text-red-600 transition z-10"
-                    onClick={e => { e.stopPropagation(); deleteSlide(index); }}
-                    title="Delete slide"
-                  >
-                    {/* Trash SVG */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a1 1 0 011 1v1H9V4a1 1 0 011-1z" />
-                    </svg>
-                  </button>
-                )}
-                {/* Slide number/title/handle */}
-                <div className="mt-6 text-center w-full">
-                  <div className="text-xs font-semibold text-blue-700 truncate">{slide.title || `Slide ${index + 1}`}</div>
-                  <div className="text-xs text-gray-500 truncate">{slide.handle}</div>
-                </div>
-                {/* Avatar */}
-                <div className="flex items-center mt-auto mb-2">
-                  <img
-                    src={slide.avatar}
-                    alt={slide.author}
-                    className="w-7 h-7 rounded-full border-2 border-blue-200 object-cover"
-                  />
-                </div>
-              </div>
-            ))}
-            {/* Add new slide card */}
-            <button
-              className="flex-shrink-0 w-36 h-44 flex flex-col items-center justify-center border-2 border-dashed border-blue-400 rounded-xl bg-blue-50 hover:bg-blue-100 transition group focus:outline-none"
-              onClick={addSlide}
-              title="Add new slide"
-              style={{ minWidth: 144, maxWidth: 144 }}
+        {/* Vertical Thumbnail Preview Bar (below both panels) */}
+        <div className="mt-4 w-full relative">
+          <div className="relative flex items-center">
+            {/* Thumbnails Scroll Row */}
+            <div
+              id="thumb-scroll-vertical"
+              className="flex flex-row items-end space-x-3 overflow-x-auto scrollbar-hide rounded-xl p-2 md:p-4 shadow-md min-w-[320px] md:min-w-[900px] w-full"
+              style={{ scrollBehavior: 'smooth' }}
             >
-              <span className="text-3xl text-blue-400 group-hover:text-blue-600">+</span>
-              <span className="mt-2 text-sm text-blue-500 font-medium">Add Slide</span>
-            </button>
+              {slides.map((slide, index) => (
+                <div
+                  key={slide.id}
+                  className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''} hover:scale-105`}
+                  style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120, background: (slide as any).background ? `${(slide as any).background}11` : '#f3f4f6' }}
+                  onClick={() => goToSlide(index)}
+                >
+                  {/* Top-right icons */}
+                  <div className="absolute top-1 right-1 flex flex-col space-y-1 z-10">
+                    <button
+                      className="text-gray-400 hover:text-blue-500 transition bg-white/80 rounded-full p-0.5"
+                      onClick={e => { e.stopPropagation(); toggleSlideVisibility(index); }}
+                      title={slide.visible ? 'Hide slide' : 'Show slide'}
+                      tabIndex={-1}
+                    >
+                      {slide.visible ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.269-2.943-9.543-7a9.96 9.96 0 012.181-3.307M9.88 9.88A3 3 0 0014.12 14.12M3 3l18 18" /></svg>
+                      )}
+                    </button>
+                    {slides.length > 1 && (
+                      <button
+                        className="text-gray-400 hover:text-red-600 transition bg-white/80 rounded-full p-0.5"
+                        onClick={e => { e.stopPropagation(); deleteSlide(index); }}
+                        title="Delete slide"
+                        tabIndex={-1}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a1 1 0 011 1v1H9V4a1 1 0 011-1z" /></svg>
+                      </button>
+                    )}
+                  </div>
+                  {/* Mini Slide Preview Content */}
+                  <div className="flex flex-col items-center justify-center w-full h-full px-1 py-1">
+                    <div className="w-full flex-1 flex flex-col justify-center items-center overflow-hidden">
+                      <div className="text-[10px] md:text-xs font-bold text-blue-700 truncate w-full text-center mb-0.5">{slide.title || `Slide ${index + 1}`}</div>
+                      <div className="text-[9px] md:text-xs text-gray-500 truncate w-full text-center mb-0.5">{slide.subtitle}</div>
+                      <div className="text-[9px] text-gray-700 line-clamp-2 w-full text-center mb-0.5">{slide.content}</div>
+                    </div>
+                    <div className="flex items-center justify-center mt-auto w-full pt-1">
+                      <img
+                        src={slide.avatar}
+                        alt={slide.author}
+                        className="w-5 h-5 rounded-full border-2 border-blue-200 object-cover mr-1"
+                      />
+                      <span className="text-[9px] text-gray-700 font-medium truncate">{slide.author || ''}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {/* Add new slide card */}
+              <button
+                className="flex-shrink-0 w-40 h-40 md:w-44 md:h-44 flex flex-col items-center justify-center border-2 border-dashed border-blue-400 rounded-xl bg-blue-50 hover:bg-blue-100 transition group focus:outline-none hover:scale-105"
+                onClick={addSlide}
+                title="Add new slide"
+                style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120 }}
+              >
+                <span className="text-2xl md:text-3xl text-blue-400 group-hover:text-blue-600">+</span>
+                <span className="mt-1 text-xs md:text-sm text-blue-500 font-medium">Add Slide</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
