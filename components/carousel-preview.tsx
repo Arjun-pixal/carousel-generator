@@ -1053,7 +1053,7 @@ export default function CarouselPreview({
 
   if (slides.length === 0) return null;
 
-  const slide = slides[currentSlide];
+  const slide = slides.length === 1 ? slides[0] : slides[currentSlide];
 
   return (
     <div
