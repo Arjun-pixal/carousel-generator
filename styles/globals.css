@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Nunito:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Nunito:wght@400;700&family=Roboto+Slab:wght@400;700&family=Lato:wght@400;700&family=Montserrat:wght@400;700&family=Merriweather:wght@400;700&family=Pacifico&family=Oswald:wght@400;700&family=Dancing+Script:wght@400;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,6 +11,15 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .font-poppins { font-family: 'Poppins', Arial, sans-serif; }
+  .font-nunito { font-family: 'Nunito', Arial, sans-serif; }
+  .font-robotoslab { font-family: 'Roboto Slab', serif; }
+  .font-lato { font-family: 'Lato', Arial, sans-serif; }
+  .font-montserrat { font-family: 'Montserrat', Arial, sans-serif; }
+  .font-merriweather { font-family: 'Merriweather', serif; }
+  .font-pacifico { font-family: 'Pacifico', cursive; }
+  .font-oswald { font-family: 'Oswald', Arial, sans-serif; }
+  .font-dancingscript { font-family: 'Dancing Script', cursive; }
 }
 
 @layer base {

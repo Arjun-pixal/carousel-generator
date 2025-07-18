@@ -44,12 +44,19 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
   ]
 
   const fontFamilyOptions = [
-    { value: "font-sans", label: "Sans Serif" },
-    { value: "font-serif", label: "Serif" },
-    { value: "font-mono", label: "Monospace" },
-    { value: "font-poppins", label: "Poppins" },
-    // { value: "font-nunito", label: "Nunito" },
-  ]
+    { value: 'font-sans', label: 'Sans (Default)' },
+    { value: 'font-serif', label: 'Serif' },
+    { value: 'font-mono', label: 'Monospace' },
+    { value: 'font-poppins', label: 'Poppins' },
+    // { value: 'font-nunito', label: 'Nunito' },
+    // { value: 'font-robotoslab', label: 'Roboto Slab' },
+    // { value: 'font-lato', label: 'Lato' },
+    // { value: 'font-montserrat', label: 'Montserrat' },
+    { value: 'font-merriweather', label: 'Merriweather' },
+    { value: 'font-pacifico', label: 'Pacifico' },
+    { value: 'font-oswald', label: 'Oswald' },
+    { value: 'font-dancingscript', label: 'Dancing Script' },
+  ];
 
   const layoutOptions = [
     { value: "centered", label: "Centered" },
