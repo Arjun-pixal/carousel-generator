@@ -372,19 +372,36 @@ export default function CarouselGenerator() {
             </p>
           </div> */}
 
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-xl mx-auto relative">
+            {/* Overlay spinner when generating */}
+            {isGenerating && (
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/80 rounded-xl animate-fadeIn">
+                <svg className="w-10 h-10 animate-spin text-blue-500 mb-2" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <span className="text-blue-700 font-bold text-lg animate-pulse">Generating Carousel...</span>
+              </div>
+            )}
             <form
-              className="flex items-center bg-blue-50 border-2 border-blue-200 rounded-xl px-3 py-1.5 shadow-sm transition-all duration-300 focus-within:shadow-lg hover:shadow-lg"
+              className={`flex items-center bg-blue-50 border-2 border-blue-200 rounded-xl px-3 py-1.5 shadow-sm transition-all duration-300 focus-within:shadow-lg hover:shadow-lg relative overflow-hidden ${isGenerating ? 'pointer-events-none' : ''}`}
               onSubmit={e => { e.preventDefault(); generateCarousel(); }}
             >
+              {/* Shimmer effect */}
+              {isGenerating && (
+                <div className="absolute inset-0 z-10 pointer-events-none">
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-blue-100 to-transparent animate-shimmer" style={{backgroundSize:'200% 100%'}}></div>
+                </div>
+              )}
               <span className="mr-3 flex items-center">
-                <span className="w-4 h-4 rounded-full border-2 border-blue-300 bg-gradient-to-br from-blue-200 to-purple-200 flex items-center justify-center animate-pulse"></span>
+                <span className={`w-4 h-4 rounded-full border-2 border-blue-300 bg-gradient-to-br from-blue-200 to-purple-200 flex items-center justify-center ${isGenerating ? 'animate-ping' : 'animate-pulse'}`}></span>
               </span>
               <input
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Enter a topic for your carousel..."
-                className="flex-1 border-none outline-none text-base bg-transparent focus:ring-0 focus:outline-none transition-all duration-200 placeholder-gray-500"
+                className={`flex-1 border-none outline-none text-base bg-transparent focus:ring-0 focus:outline-none transition-all duration-200 placeholder-gray-500 ${isGenerating ? 'bg-blue-100 animate-pulse' : ''}`}
+                disabled={isGenerating}
               />
               <button
                 type="submit"
@@ -395,8 +412,15 @@ export default function CarouselGenerator() {
                   }`}
                 style={!prompt.trim() || isGenerating ? {} : {}}
               >
-                <Wand2 className="w-5 h-5 mr-2" />
-                Generate Carousel
+                {isGenerating ? (
+                  <svg className="w-5 h-5 mr-2 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  </svg>
+                ) : (
+                  <Wand2 className="w-5 h-5 mr-2" />
+                )}
+                {isGenerating ? 'Generating...' : 'Generate Carousel'}
               </button>
             </form>
           </div>
@@ -404,7 +428,7 @@ export default function CarouselGenerator() {
       </section>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-4 flex flex-col">
+      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-4 flex flex-col animate-fadeIn">
         {/* Side-by-side main area, responsive */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-8 w-full min-h-[500px]">
           {/* Live Preview (left, slightly smaller) */}
@@ -460,7 +484,7 @@ export default function CarouselGenerator() {
               </nav>
             </div>
             {/* Tab Content */}
-            <div className="flex-1 p-8 overflow-y-auto">
+            <div className="flex-1 p-8 overflow-y-auto animate-fadeIn">
               {activeTab === "Content" && slides.length > 0 && (
                 <>
                   {/* Profile Editing Section */}
@@ -568,7 +592,7 @@ export default function CarouselGenerator() {
               {slides.map((slide, index) => (
                 <div
                   key={slide.id}
-                  className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''} hover:scale-105`}
+                  className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 hover:scale-105 animate-fadeIn ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''}`}
                   style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120, background: (slide as any).background ? `${(slide as any).background}11` : '#f3f4f6' }}
                   onClick={() => goToSlide(index)}
                 >
@@ -720,16 +744,3 @@ function resizeImage(file: File, maxSize = 96): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
-
-/* Add this to the bottom of the file or in your global CSS */
-/*
-.button-wave-bg {
-  background: linear-gradient(270deg, #2563eb, #6366f1, #a21caf, #6366f1, #2563eb);
-  background-size: 400% 100%;
-  animation: waveMove 4s linear infinite;
-}
-@keyframes waveMove {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-*/
