@@ -408,7 +408,7 @@ export default function CarouselGenerator() {
                 disabled={!prompt.trim() || isGenerating}
                 className={`ml-3 px-4 py-2 rounded-lg font-bold text-white uppercase tracking-wide flex items-center justify-center whitespace-nowrap shadow-md transition-all duration-200 relative overflow-hidden ${!prompt.trim() || isGenerating
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "button-wave-bg hover:scale-105 focus:scale-105"
+                  : "button-wave-bg hover:scale-105 focus:scale-105 animate-floatSoft"
                   }`}
                 style={!prompt.trim() || isGenerating ? {} : {}}
               >
@@ -428,7 +428,7 @@ export default function CarouselGenerator() {
       </section>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-4 flex flex-col animate-fadeIn">
+      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-4 flex flex-col animate-fadeIn animate-floatSoft">
         {/* Side-by-side main area, responsive */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-8 w-full min-h-[500px]">
           {/* Live Preview (left, slightly smaller) */}
@@ -592,7 +592,7 @@ export default function CarouselGenerator() {
               {slides.map((slide, index) => (
                 <div
                   key={slide.id}
-                  className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 hover:scale-105 animate-fadeIn ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''}`}
+                  className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 hover:scale-105 animate-fadeIn animate-floatSoft ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''}`}
                   style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120, background: (slide as any).background ? `${(slide as any).background}11` : '#f3f4f6' }}
                   onClick={() => goToSlide(index)}
                 >

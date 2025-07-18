@@ -93,3 +93,12 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes floatSoft {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+.animate-floatSoft {
+  animation: floatSoft 3s ease-in-out infinite;
+}
