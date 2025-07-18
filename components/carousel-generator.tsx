@@ -41,8 +41,6 @@ export default function CarouselGenerator() {
   const [slides, setSlides] = useState<SlideData[]>([]);
   const [activeTab, setActiveTab] = useState("Content");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
   const [userProfile, setUserProfile] = useState<UserProfile>({
     name: "",
@@ -342,14 +340,6 @@ export default function CarouselGenerator() {
               </h1>
             </div>
 
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-
             {/* Desktop download button */}
             {/* <button
               className="hidden lg:flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -384,7 +374,7 @@ export default function CarouselGenerator() {
               </div>
             )}
             <form
-              className={`flex items-center bg-blue-50 border-2 border-blue-200 rounded-xl px-3 py-1.5 shadow-sm transition-all duration-300 focus-within:shadow-lg hover:shadow-lg relative overflow-hidden ${isGenerating ? 'pointer-events-none' : ''}`}
+              className={`flex flex-row items-center bg-blue-50 border-2 border-blue-200 rounded-xl px-3 py-1.5 shadow-sm transition-all duration-300 focus-within:shadow-lg hover:shadow-lg relative overflow-hidden ${isGenerating ? 'pointer-events-none' : ''}`}
               onSubmit={e => { e.preventDefault(); generateCarousel(); }}
             >
               {/* Shimmer effect */}
@@ -400,13 +390,13 @@ export default function CarouselGenerator() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Enter a topic for your carousel..."
-                className={`flex-1 border-none outline-none text-base bg-transparent focus:ring-0 focus:outline-none transition-all duration-200 placeholder-gray-500 ${isGenerating ? 'bg-blue-100 animate-pulse' : ''}`}
+                className={`flex-1 min-w-0 border-none outline-none text-base bg-transparent focus:ring-0 focus:outline-none transition-all duration-200 placeholder-gray-500 ${isGenerating ? 'bg-blue-100 animate-pulse' : ''}`}
                 disabled={isGenerating}
               />
               <button
                 type="submit"
                 disabled={!prompt.trim() || isGenerating}
-                className={`ml-3 px-4 py-2 rounded-lg font-bold text-white uppercase tracking-wide flex items-center justify-center whitespace-nowrap shadow-md transition-all duration-200 relative overflow-hidden ${!prompt.trim() || isGenerating
+                className={`flex-shrink-0 ml-3 px-4 py-2 rounded-lg font-bold text-white uppercase tracking-wide flex items-center justify-center whitespace-nowrap shadow-md transition-all duration-200 relative overflow-hidden ${!prompt.trim() || isGenerating
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "button-wave-bg hover:scale-105 focus:scale-105 animate-floatSoft"
                   }`}
@@ -418,9 +408,9 @@ export default function CarouselGenerator() {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                   </svg>
                 ) : (
-                  <Wand2 className="w-5 h-5 mr-2" />
+                  <Wand2 className="w-5 h-5 md:mr-2" />
                 )}
-                {isGenerating ? 'Generating...' : 'Generate Carousel'}
+                <span className="hidden md:inline">{isGenerating ? 'Generating...' : 'Generate Carousel'}</span>
               </button>
             </form>
           </div>
@@ -432,7 +422,7 @@ export default function CarouselGenerator() {
         {/* Side-by-side main area, responsive */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-8 w-full min-h-[500px]">
           {/* Live Preview (left, slightly smaller) */}
-          <div className="w-full md:flex-[0.9] min-h-[300px] md:min-h-[600px] h-auto md:h-[650px] bg-white rounded-xl shadow-md p-2 md:p-6 flex flex-col justify-between mb-4 md:mb-0 transition-all duration-300">
+          <div className="w-full md:flex-[0.9] min-h-[300px] md:min-h-[700px] h-auto md:h-[650px] bg-white rounded-xl shadow-md p-2 md:p-6 flex flex-col justify-between mb-4 md:mb-0 transition-all duration-300">
             <h3 className="text-xl font-semibold text-gray-900 mb-4">Live Preview</h3>
             {(() => { console.log('Live Preview selectedSlideIndex:', selectedSlideIndex, 'slide:', slides[selectedSlideIndex]); return null })()}
             {slides.length > 0 ? (
@@ -464,18 +454,20 @@ export default function CarouselGenerator() {
             )}
           </div>
           {/* Tabbed Controls (right, slightly larger, scrollable) */}
-          <div className="w-full md:flex-[1.1] min-h-[300px] md:min-h-[600px] h-auto md:h-[650px] bg-white rounded-xl shadow-md p-0 flex flex-col overflow-auto transition-all duration-300">
+          <div className="w-full md:flex-[1.1] min-h-[300px] md:min-h-[700px] h-auto md:h-[650px] bg-white rounded-xl shadow-md p-0 flex flex-col overflow-auto transition-all duration-300">
             {/* Tabs */}
-            <div className="border-b px-6 pt-6 bg-white rounded-t-2xl">
-              <nav className="flex space-x-1 p-2">
+            <div className="border-b px-2 sm:px-6 pt-6 bg-white rounded-t-2xl">
+              {/* Responsive Tab Nav: horizontally scrollable on tablet and below */}
+              <nav className="flex flex-nowrap overflow-x-auto space-x-1 p-2 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 rounded-xl shadow animate-fadeIn scrollbar-hide">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                      }`}
+                    className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 transform focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 flex-shrink-0
+                      ${activeTab === tab.id
+                        ? "bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 text-blue-700 scale-105 shadow-lg animate-floatSoft"
+                        : "text-gray-600 hover:text-blue-700 hover:bg-blue-50 hover:scale-105"}
+                    `}
                   >
                     <tab.icon className="w-4 h-4 mr-2" />
                     {tab.label}
@@ -565,15 +557,15 @@ export default function CarouselGenerator() {
                 <ThemePanel designSettings={designSettings} onSettingsChange={setDesignSettings} />
               )}
               {activeTab === "Export" && (
-                <div className="flex flex-col items-center justify-center min-h-[300px]">
+                <div className="flex flex-col items-center justify-center min-h-[300px] w-full px-2">
                   <button
-                    className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold"
+                    className="flex items-center justify-center w-full md:w-auto p-2 md:px-6 md:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-base md:text-lg font-semibold"
                     onClick={handleDownloadPDF}
                   >
-                    <Download className="w-5 h-5 mr-2" />
-                    Download PDF
+                    <Download className="w-5 h-5 md:mr-2" />
+                    <span className="hidden md:inline">Download PDF</span>
                   </button>
-                  <p className="mt-4 text-gray-500 text-center">Download your carousel as a high-quality PDF.</p>
+                  <p className="mt-4 text-gray-500 text-center text-sm md:text-base">Download your carousel as a high-quality PDF.</p>
                 </div>
               )}
             </div>
@@ -586,14 +578,14 @@ export default function CarouselGenerator() {
             {/* Thumbnails Scroll Row */}
             <div
               id="thumb-scroll-vertical"
-              className="flex flex-row items-end space-x-3 overflow-x-auto scrollbar-hide rounded-xl p-2 md:p-4 shadow-md min-w-[320px] md:min-w-[900px] w-full"
+              className="flex flex-row items-end space-x-3 overflow-x-auto scrollbar-hide rounded-xl p-2 md:p-4 shadow-md min-w-[320px] md:min-w-[700px] w-full"
               style={{ scrollBehavior: 'smooth' }}
             >
               {slides.map((slide, index) => (
                 <div
                   key={slide.id}
-                  className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 hover:scale-105 animate-fadeIn animate-floatSoft ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''}`}
-                  style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120, background: (slide as any).background ? `${(slide as any).background}11` : '#f3f4f6' }}
+                  className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 min-w-[80px] max-w-[120px] md:min-w-[100px] md:max-w-[140px] lg:min-w-[120px] lg:max-w-[160px] rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 hover:scale-105 animate-fadeIn animate-floatSoft ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''}`}
+                  style={{ aspectRatio: '9/16', background: (slide as any).background ? `${(slide as any).background}11` : '#f3f4f6' }}
                   onClick={() => goToSlide(index)}
                 >
                   {/* Top-right icons */}
@@ -683,7 +675,7 @@ export default function CarouselGenerator() {
         ))}
       </div>
 
-      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+      <Dialog open={false} onOpenChange={() => {}}>
         <DialogContent>
           <DialogTitle className="sr-only">Full Carousel Preview</DialogTitle>
           <CarouselPreview
