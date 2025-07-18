@@ -278,7 +278,7 @@ export default function CarouselGenerator() {
   }
 
   // Handler for updating a field of the selected slide
-  const updateSelectedSlide= (field: keyof SlideData, value: string) => {
+  const updateSelectedSlide = (field: keyof SlideData, value: string) => {
     setSlides((prev) =>
       prev.map((slide, idx) =>
         idx === selectedSlideIndex ? { ...slide, [field]: value } : slide
