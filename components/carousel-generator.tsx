@@ -93,36 +93,63 @@ export default function CarouselGenerator() {
   const generateCarousel = async () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate async
-    // Generate a short description for the subtitle
-    let subtitle = "";
-    const words = prompt.trim().split(/\s+/);
-    if (words.length > 8) {
-      subtitle = words.slice(0, 16).join(" ") + (words.length > 16 ? "..." : "");
-    } else if (words.length > 0) {
-      subtitle = prompt;
-    } else {
-      subtitle = "A new carousel slide";
+
+    try {
+      // Call your API endpoint
+      const response = await fetch('/api/generate-slide', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+
+      // Get the raw text of the response for debugging
+      const responseText = await response.text();
+      console.log("Raw API response from server:", responseText);
+
+      if (!response.ok) {
+        throw new Error(`Failed to generate slide. Status: ${response.status}. Body: ${responseText}`);
+      }
+
+      // Now, try to parse the text as JSON
+      const data = JSON.parse(responseText);
+
+      // Check if the API returned a custom error object
+      if (data.error) {
+        console.error("API returned an error:", data.error, data.details || '');
+        throw new Error(data.error);
+      }
+      
+      const { heading, subheading, content } = data;
+
+      // Check if the required fields are present
+      if (heading === undefined || subheading === undefined || content === undefined) {
+        console.error("API response missing required fields:", data);
+        throw new Error("Invalid data structure from API.");
+      }
+
+      const newSlide: SlideData = {
+        id: `slide-${Date.now()}`,
+        title: heading,
+        subtitle: subheading,
+        content,
+        author: userProfile.name,
+        handle: userProfile.handle,
+        avatar: userProfile.avatar,
+        visible: true,
+      };
+
+      setSlides((prev) => {
+        const updated = [...prev, newSlide];
+        setSelectedSlideIndex(updated.length - 1);
+        return updated;
+      });
+      setPrompt("");
+    } catch (err) {
+      console.error("Full error in generateCarousel:", err);
+      alert("Failed to generate slide. Please try again.");
+    } finally {
+      setIsGenerating(false);
     }
-    const newSlide: SlideData = {
-      id: `slide-${Date.now()}`,
-      title: prompt.split(" ").slice(0, 8).join(" "), // Bold title from prompt
-      subtitle,
-      content: `This slide is about: ${prompt}`,
-      author: userProfile.name,
-      handle: userProfile.handle,
-      avatar: userProfile.avatar,
-      visible: true,
-      // Optionally, you can add a background field if your SlideData supports it
-      // background: getBackgroundForPrompt(prompt),
-    };
-    setSlides((prev) => {
-      const updated = [...prev, newSlide];
-      setSelectedSlideIndex(updated.length - 1); // Select the new slide
-      return updated;
-    });
-    setPrompt("");
-    setIsGenerating(false);
   };
 
   // Navigation handlers
@@ -397,7 +424,7 @@ export default function CarouselGenerator() {
                 type="submit"
                 disabled={!prompt.trim() || isGenerating}
                 className={`flex-shrink-0 ml-3 px-4 py-2 rounded-lg font-bold text-white uppercase tracking-wide flex items-center justify-center whitespace-nowrap shadow-md transition-all duration-200 relative overflow-hidden ${!prompt.trim() || isGenerating
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "button-wave-bg hover:scale-105 focus:scale-105 animate-floatSoft"
                   }`}
                 style={!prompt.trim() || isGenerating ? {} : {}}
@@ -570,7 +597,7 @@ export default function CarouselGenerator() {
               )}
             </div>
           </div>
-
+          
         </div>
         {/* Vertical Thumbnail Preview Bar (below both panels) */}
         <div className="mt-4 w-full relative">
@@ -581,37 +608,37 @@ export default function CarouselGenerator() {
               className="flex flex-row items-end space-x-3 overflow-x-auto scrollbar-hide rounded-xl p-2 md:p-4 shadow-md min-w-[320px] md:min-w-[700px] w-full"
               style={{ scrollBehavior: 'smooth' }}
             >
-              {slides.map((slide, index) => (
-                <div
-                  key={slide.id}
+            {slides.map((slide, index) => (
+              <div
+                key={slide.id}
                   className={`relative flex-shrink-0 w-40 h-40 md:w-34 md:h-44 min-w-[80px] max-w-[120px] md:min-w-[100px] md:max-w-[140px] lg:min-w-[120px] lg:max-w-[160px] rounded-xl border flex flex-col items-center justify-between p-2 bg-white shadow group cursor-pointer transition-all duration-200 hover:scale-105 animate-fadeIn animate-floatSoft ${index === selectedSlideIndex ? 'ring-2 ring-blue-500 border-blue-500 shadow-lg' : 'border-gray-200'} ${!slide.visible ? 'opacity-60' : ''}`}
                   style={{ aspectRatio: '9/16', background: (slide as any).background ? `${(slide as any).background}11` : '#f3f4f6' }}
-                  onClick={() => goToSlide(index)}
-                >
+                onClick={() => goToSlide(index)}
+              >
                   {/* Top-right icons */}
                   <div className="absolute top-1 right-1 flex flex-col space-y-1 z-10">
-                    <button
+                <button
                       className="text-gray-400 hover:text-blue-500 transition bg-white/80 rounded-full p-0.5"
-                      onClick={e => { e.stopPropagation(); toggleSlideVisibility(index); }}
+                  onClick={e => { e.stopPropagation(); toggleSlideVisibility(index); }}
                       title={slide.visible ? 'Hide slide' : 'Show slide'}
                       tabIndex={-1}
-                    >
-                      {slide.visible ? (
+                >
+                  {slide.visible ? (
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                       ) : (
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.269-2.943-9.543-7a9.96 9.96 0 012.181-3.307M9.88 9.88A3 3 0 0014.12 14.12M3 3l18 18" /></svg>
-                      )}
-                    </button>
-                    {slides.length > 1 && (
-                      <button
+                  )}
+                </button>
+                {slides.length > 1 && (
+                  <button
                         className="text-gray-400 hover:text-red-600 transition bg-white/80 rounded-full p-0.5"
-                        onClick={e => { e.stopPropagation(); deleteSlide(index); }}
-                        title="Delete slide"
+                    onClick={e => { e.stopPropagation(); deleteSlide(index); }}
+                    title="Delete slide"
                         tabIndex={-1}
-                      >
+                  >
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a1 1 0 011 1v1H9V4a1 1 0 011-1z" /></svg>
-                      </button>
-                    )}
+                  </button>
+                )}
                   </div>
                   {/* Mini Slide Preview Content */}
                   <div className="flex flex-col items-center justify-center w-full h-full px-1 py-1">
@@ -619,28 +646,28 @@ export default function CarouselGenerator() {
                       <div className="text-[10px] md:text-xs font-bold text-blue-700 truncate w-full text-center mb-0.5">{slide.title || `Slide ${index + 1}`}</div>
                       <div className="text-[9px] md:text-xs text-gray-500 truncate w-full text-center mb-0.5">{slide.subtitle}</div>
                       <div className="text-[9px] text-gray-700 line-clamp-2 w-full text-center mb-0.5">{slide.content}</div>
-                    </div>
+                </div>
                     <div className="flex items-center justify-center mt-auto w-full pt-1">
-                      <img
-                        src={slide.avatar}
-                        alt={slide.author}
+                  <img
+                    src={slide.avatar}
+                    alt={slide.author}
                         className="w-5 h-5 rounded-full border-2 border-blue-200 object-cover mr-1"
-                      />
+                  />
                       <span className="text-[9px] text-gray-700 font-medium truncate">{slide.author || ''}</span>
                     </div>
                   </div>
-                </div>
-              ))}
-              {/* Add new slide card */}
-              <button
+              </div>
+            ))}
+            {/* Add new slide card */}
+            <button
                 className="flex-shrink-0 w-40 h-40 md:w-44 md:h-44 flex flex-col items-center justify-center border-2 border-dashed border-blue-400 rounded-xl bg-blue-50 hover:bg-blue-100 transition group focus:outline-none hover:scale-105"
-                onClick={addSlide}
-                title="Add new slide"
+              onClick={addSlide}
+              title="Add new slide"
                 style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120 }}
-              >
+            >
                 <span className="text-2xl md:text-3xl text-blue-400 group-hover:text-blue-600">+</span>
                 <span className="mt-1 text-xs md:text-sm text-blue-500 font-medium">Add Slide</span>
-              </button>
+            </button>
             </div>
           </div>
         </div>

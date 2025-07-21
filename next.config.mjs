@@ -13,8 +13,7 @@ const nextConfig = {
   // devIndicators: {
   //   buildActivityPosition: 'hidden', // 👈 Hides the "N" icon in dev
   // },
-  devIndicators:false,
-  output:"export",
+  devIndicators:false
 }
 
 export default nextConfig
