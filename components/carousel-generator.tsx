@@ -61,6 +61,7 @@ export default function CarouselGenerator() {
     fontFamily: "font-sans",
     slideLayout: "centered",
   });
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const pdfSlidesRef = useRef<HTMLDivElement>(null);
 
   // 2. Only load data and render UI after client-side hydration
@@ -278,12 +279,23 @@ export default function CarouselGenerator() {
         return (
           <div className="flex flex-col items-center justify-center min-h-[300px]">
             <button
-              className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold"
+              className={`flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold relative ${isGeneratingPDF ? "opacity-70 cursor-not-allowed" : ""}`}
               onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
             >
-              <Download className="w-5 h-5 mr-2" />
-              Download PDF
+              {isGeneratingPDF ? (
+                <svg className="w-5 h-5 mr-2 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              ) : (
+                <Download className="w-5 h-5 mr-2" />
+              )}
+              {isGeneratingPDF ? "Generating PDF..." : "Download PDF"}
             </button>
+            {isGeneratingPDF && (
+              <span className="mt-4 text-blue-600 font-semibold animate-pulse">Generating your PDF, please wait...</span>
+            )}
             <p className="mt-4 text-gray-500 text-center">Download your carousel as a high-quality PDF.</p>
           </div>
         )
@@ -294,24 +306,30 @@ export default function CarouselGenerator() {
 
   async function handleDownloadPDF() {
     if (!slides.length) return;
-    // Render each slide as an image and add to PDF
-    const pdf = new jsPDF({
-      orientation: "landscape",
-      unit: "px",
-      format: [1080, 1080],
-    });
-    const slideNodes = pdfSlidesRef.current?.querySelectorAll(".pdf-slide");
-    if (!slideNodes || slideNodes.length === 0) return;
-
-    for (let i = 0; i < slideNodes.length; i++) {
-      const node = slideNodes[i] as HTMLElement;
-      // eslint-disable-next-line no-await-in-loop
-      const canvas = await html2canvas(node, { background: "#fff", scale: 2, width: 1080, height: 1080 } as any);
-      const imgData = canvas.toDataURL("image/png");
-      if (i > 0) pdf.addPage([1080, 1080], "landscape");
-      pdf.addImage(imgData, "PNG", 0, 0, 1080, 1080);
+    setIsGeneratingPDF(true);
+    try {
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "px",
+        format: [1080, 1080],
+      });
+      const slideNodes = pdfSlidesRef.current?.querySelectorAll(".pdf-slide");
+      if (!slideNodes || slideNodes.length === 0) {
+        setIsGeneratingPDF(false);
+        return;
+      }
+      for (let i = 0; i < slideNodes.length; i++) {
+        const node = slideNodes[i] as HTMLElement;
+        // eslint-disable-next-line no-await-in-loop
+        const canvas = await html2canvas(node, { background: "#fff", scale: 2, width: 1080, height: 1080 } as any);
+        const imgData = canvas.toDataURL("image/png");
+        if (i > 0) pdf.addPage([1080, 1080], "landscape");
+        pdf.addImage(imgData, "PNG", 0, 0, 1080, 1080);
+      }
+      pdf.save("carousel.pdf");
+    } finally {
+      setIsGeneratingPDF(false);
     }
-    pdf.save("carousel.pdf");
   }
 
   // Handler for updating a field of the selected slide
@@ -598,12 +616,24 @@ export default function CarouselGenerator() {
               {activeTab === "Export" && (
                 <div className="flex flex-col items-center justify-center min-h-[300px] w-full px-2">
                   <button
-                    className="flex items-center justify-center w-full md:w-auto p-2 md:px-6 md:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-base md:text-lg font-semibold"
+                    className={`flex items-center justify-center w-full md:w-auto p-2 md:px-6 md:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-base md:text-lg font-semibold relative ${isGeneratingPDF ? "opacity-70 cursor-not-allowed" : ""}`}
                     onClick={handleDownloadPDF}
+                    disabled={isGeneratingPDF}
                   >
-                    <Download className="w-5 h-5 md:mr-2" />
-                    <span className="hidden md:inline">Download PDF</span>
+                    {isGeneratingPDF ? (
+                      <span className="flex items-center mr-2">
+                        <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.32s]"></span>
+                        <span className="inline-block w-2 h-2 bg-white rounded-full mx-1 animate-bounce [animation-delay:-0.16s]"></span>
+                        <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce"></span>
+                      </span>
+                    ) : (
+                      <Download className="w-5 h-5 md:mr-2" />
+                    )}
+                    <span className="hidden md:inline">{isGeneratingPDF ? "Generating PDF..." : "Download PDF"}</span>
                   </button>
+                  {isGeneratingPDF && (
+                    <span className="mt-4 text-blue-600 font-semibold animate-pulse">Generating your PDF, please wait...</span>
+                  )}
                   <p className="mt-4 text-gray-500 text-center text-sm md:text-base">Download your carousel as a high-quality PDF.</p>
                 </div>
               )}
