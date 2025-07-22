@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // ✅ Use Gemini 1.5 Flash (a fast and cost-effective model, great for free tier)
 const GEMINI_API_KEY = "AIzaSyDnKOqY7NGBIh2tz3apK30p2bVd7MLh03c";
-const GEMINI_MODEL = "gemini-1.5-flash-latest";
+const GEMINI_MODEL = "gemini-2.5-flash";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
 export async function POST(req: NextRequest) {
@@ -43,8 +43,7 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await geminiRes.json();
-    console.log("Gemini raw response:", JSON.stringify(data, null, 2));
-
+    
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
       console.error("Unexpected Gemini response structure", data);
       return NextResponse.json({ error: 'Unexpected Gemini response structure', raw: data }, { status: 500 });

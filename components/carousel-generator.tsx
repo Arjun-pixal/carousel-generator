@@ -89,42 +89,54 @@ export default function CarouselGenerator() {
     localStorage.setItem("carouselDesignSettings", JSON.stringify(designSettings));
   }, [designSettings, isReady]);
 
-  // Generate a new slide from the prompt and append it
+  const GEMINI_API_KEY = "AIzaSyDnKOqY7NGBIh2tz3apK30p2bVd7MLh03c";
+  const GEMINI_MODEL = "gemini-2.5-flash";
+  const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+
   const generateCarousel = async () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
 
     try {
-      // Call your API endpoint
-      const response = await fetch('/api/generate-slide', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+      const systemPrompt = `You are an expert content editor. Given a paragraph, split it into three parts: a concise heading (max 10 words), a subheading (max 20 words), and the remaining content. Return ONLY a valid JSON object with keys: heading, subheading, content. Do not include any explanations, markdown, or code block. Example: {"heading": "...", "subheading": "...", "content": "..."}`;
+      const userPrompt = prompt;
+
+      const geminiPayload = {
+        contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+        safetySettings: [
+          { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+          { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+          { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+          { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
+        ],
+        generationConfig: {
+          responseMimeType: "application/json",
+        },
+      };
+
+      const response = await fetch(GEMINI_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(geminiPayload),
       });
 
-      // Get the raw text of the response for debugging
       const responseText = await response.text();
-      console.log("Raw API response from server:", responseText);
+      console.log("Raw Gemini API response:", responseText);
 
       if (!response.ok) {
-        throw new Error(`Failed to generate slide. Status: ${response.status}. Body: ${responseText}`);
+        throw new Error(`Gemini API error: ${response.status} - ${responseText}`);
       }
 
-      // Now, try to parse the text as JSON
       const data = JSON.parse(responseText);
 
-      // Check if the API returned a custom error object
-      if (data.error) {
-        console.error("API returned an error:", data.error, data.details || '');
-        throw new Error(data.error);
+      if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        throw new Error("Unexpected Gemini response structure");
       }
-      
-      const { heading, subheading, content } = data;
 
-      // Check if the required fields are present
+      const { heading, subheading, content } = JSON.parse(data.candidates[0].content.parts[0].text);
+
       if (heading === undefined || subheading === undefined || content === undefined) {
-        console.error("API response missing required fields:", data);
-        throw new Error("Invalid data structure from API.");
+        throw new Error("Invalid data structure from Gemini API.");
       }
 
       const newSlide: SlideData = {
