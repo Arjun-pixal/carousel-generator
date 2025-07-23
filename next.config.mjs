@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Add the output export configuration to generate the `out` folder
+  output: 'export',
+
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -7,13 +10,11 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    // Image optimization is not available for static exports, so this is required.
     unoptimized: true,
   },
-  
-  // devIndicators: {
-  //   buildActivityPosition: 'hidden', // 👈 Hides the "N" icon in dev
-  // },
-  devIndicators:false
-}
 
-export default nextConfig
+  devIndicators: false,
+};
+
+export default nextConfig;

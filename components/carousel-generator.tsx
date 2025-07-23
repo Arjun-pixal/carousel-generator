@@ -43,9 +43,9 @@ export default function CarouselGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
   const [userProfile, setUserProfile] = useState<UserProfile>({
-    name: "",
-    handle: "",
-    avatar: "",
+    name: "Alex Johnson",
+    handle: "@alexjohnson",
+    avatar: "/placeholder-user.jpg", // Make sure this image exists in your public folder
   });
   const [designSettings, setDesignSettings] = useState<DesignSettings>({
     backgroundElement: "dots",
@@ -99,7 +99,29 @@ export default function CarouselGenerator() {
     setIsGenerating(true);
 
     try {
-      const systemPrompt = `You are an expert content editor. Given a paragraph, split it into three parts: a concise heading (max 10 words), a subheading (max 20 words), and the remaining content. Return ONLY a valid JSON object with keys: heading, subheading, content. Do not include any explanations, markdown, or code block. Example: {"heading": "...", "subheading": "...", "content": "..."}`;
+      const systemPrompt = `You are an expert content creator for social media carousels.
+
+Given a topic or a paragraph, generate a carousel in the following format:
+
+- The **first slide** is a dynamic "hook" slide. Generate a catchy, attention-grabbing heading and a compelling subheading that are highly relevant to the user's topic or paragraph. The "content" field must be empty.
+- The **middle slides** (slides 2 to N-2) each represent a single point, tip, or step. Each should have a title, subtitle, and detailed content.
+- The **last two slides** are "section finishing" slides:
+    - The **penultimate slide** (second to last) should be a summary or key takeaway slide, summarizing the main points or providing a final important insight.
+    - The **final slide** should be a call to action or motivational wrap-up, encouraging the user to apply what they've learned or take the next step.
+
+If the user provides a paragraph, extract the main idea for the hook slide, then break the rest into points for the following slides.
+
+Respond ONLY with a valid JSON object:
+{
+  "slides": [
+    { "heading": "Dynamic Hook Title", "subheading": "Dynamic Hook Subtitle", "content": "" },
+    { "heading": "Point 1 Title", "subheading": "Point 1 Subtitle", "content": "Point 1 Content" },
+    ...
+    { "heading": "Summary Title", "subheading": "Summary Subtitle", "content": "Summary Content" },
+    { "heading": "Call to Action Title", "subheading": "Motivational Subtitle", "content": "Short, motivating message" }
+  ]
+}
+Do not include any explanations, markdown, or text outside the JSON.`;
       const userPrompt = prompt;
 
       const geminiPayload = {
@@ -134,27 +156,31 @@ export default function CarouselGenerator() {
         throw new Error("Unexpected Gemini response structure");
       }
 
-      const { heading, subheading, content } = JSON.parse(data.candidates[0].content.parts[0].text);
+      const { slides: generatedSlides } = JSON.parse(data.candidates[0].content.parts[0].text);
 
-      if (heading === undefined || subheading === undefined || content === undefined) {
-        throw new Error("Invalid data structure from Gemini API.");
+      if (!Array.isArray(generatedSlides) || generatedSlides.length === 0) {
+        throw new Error("Invalid data structure from Gemini API: 'slides' array not found.");
       }
 
-      const newSlide: SlideData = {
-        id: `slide-${Date.now()}`,
-        title: heading,
-        subtitle: subheading,
-        content,
-        author: userProfile.name,
-        handle: userProfile.handle,
-        avatar: userProfile.avatar,
-        visible: true,
-      };
+      const newSlides: SlideData[] = generatedSlides.map((slide: any, index: number) => {
+        if (typeof slide.heading !== 'string' || typeof slide.subheading !== 'string' || typeof slide.content !== 'string') {
+          throw new Error(`Invalid slide object at index ${index}`);
+        }
+        return {
+          id: `slide-${Date.now()}-${index}`,
+          title: slide.heading,
+          subtitle: slide.subheading,
+          content: slide.content,
+          author: userProfile.name,
+          handle: userProfile.handle,
+          avatar: userProfile.avatar,
+          visible: true,
+        };
+      });
 
-      setSlides((prev) => {
-        const updated = [...prev, newSlide];
-        setSelectedSlideIndex(updated.length - 1);
-        return updated;
+      setSlides(() => {
+        setSelectedSlideIndex(0); // Select the first new slide
+        return newSlides;
       });
       setPrompt("");
     } catch (err) {
@@ -175,66 +201,6 @@ export default function CarouselGenerator() {
   const goToSlide = (idx: number) => {
     console.log('goToSlide called with idx:', idx);
     setSelectedSlideIndex(idx);
-  };
-
-  const generateSlidesFromPrompt = (inputPrompt: string): SlideData[] => {
-    // Clean and split prompt
-    const trimmed = inputPrompt.trim();
-    if (!trimmed) {
-      return [
-        {
-          id: "slide-1",
-          title: "Create Carousel",
-          subtitle: "",
-          content: "",
-          author: userProfile.name,
-          handle: userProfile.handle,
-          avatar: userProfile.avatar,
-          visible: true,
-        },
-      ];
-    }
-    // Split into words
-    const words = trimmed.split(/\s+/);
-    if (words.length <= 3) {
-      // Short prompt: use as subheading
-      return [
-        {
-          id: "slide-1",
-          title: "Create Carousel",
-          subtitle: trimmed,
-          content: "",
-          author: userProfile.name,
-          handle: userProfile.handle,
-          avatar: userProfile.avatar,
-          visible: true,
-        },
-      ];
-    }
-    // Longer prompt: intelligently split
-    // Heading: first 5-8 words
-    const headingWords = words.slice(0, Math.min(8, Math.max(5, words.length)));
-    const heading = headingWords.join(" ");
-    // Subheading: next 8-15 words
-    const subheadingStart = headingWords.length;
-    const subheadingEnd = subheadingStart + Math.min(15, Math.max(8, words.length - subheadingStart));
-    const subheadingWords = words.slice(subheadingStart, subheadingEnd);
-    const subheading = subheadingWords.join(" ");
-    // Content: rest
-    const contentWords = words.slice(subheadingEnd);
-    const content = contentWords.join(" ");
-    return [
-      {
-        id: "slide-1",
-        title: heading,
-        subtitle: subheading,
-        content: content,
-        author: userProfile.name,
-        handle: userProfile.handle,
-        avatar: userProfile.avatar,
-        visible: true,
-      },
-    ];
   };
 
   const tabs = [
@@ -437,7 +403,7 @@ export default function CarouselGenerator() {
               {/* Shimmer effect */}
               {isGenerating && (
                 <div className="absolute inset-0 z-10 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-blue-100 to-transparent animate-shimmer" style={{backgroundSize:'200% 100%'}}></div>
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-blue-100 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }}></div>
                 </div>
               )}
               <span className="mr-3 flex items-center">
@@ -701,15 +667,15 @@ export default function CarouselGenerator() {
                 </div>
               ))}
               {/* Add new slide card */}
-              <button
+              {/* <button
                 className="flex-shrink-0 w-40 h-40 md:w-44 md:h-44 flex flex-col items-center justify-center border-2 border-dashed border-blue-400 rounded-xl bg-blue-50 hover:bg-blue-100 transition group focus:outline-none hover:scale-105"
-                onClick={addSlide}
-                title="Add new slide"
+              onClick={addSlide}
+              title="Add new slide"
                 style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120 }}
-              >
+            >
                 <span className="text-2xl md:text-3xl text-blue-400 group-hover:text-blue-600">+</span>
                 <span className="mt-1 text-xs md:text-sm text-blue-500 font-medium">Add Slide</span>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
