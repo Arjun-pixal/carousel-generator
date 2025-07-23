@@ -70,7 +70,7 @@ export default function CarouselPreview({
     ["#0F172A", "#1E3A8A", "#ECFEFF"], // Deep Navy + Blue + Pale Cyan 7
     ["#F43F5E", "#0F172A", "#FEF2F2"], // Rose + Light Rose + Blush 8
     // ["#78350F", "#D6D3D1", "#E7E5E4"], // Brown + Grayish + Off-white 9
-    ["#6366F1", "#60A5FA", "#DBEAFE"], // Indigo + Sky + Light Blue 10
+    ["#4338CA","#3B82F6","#BFDBFE"], // Deep Purple + Blue + Pale Blue 10
     ["#B91C1C", "#991B1B", "#FEE2E2"], // Red + Deep Red + Light Pink 11
     ["#1E293B", "#3B82F6", "#E0F2FE"], // Slate + Blue + Pale Blue 12
     ["#F59E0B", "#10B981", "#FEFCE8"], // Amber + Emerald + Light Yellow 13

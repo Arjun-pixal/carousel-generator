@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Wand2, Download, Eye, Settings, Palette, FileText, Menu, X } from "lucide-react"
 import ContentEditor from "@/components/content-editor"
+import { motion } from "framer-motion"
 import SettingsPanel from "@/components/settings-panel"
 import ThemePanel from "@/components/theme-panel"
 import CarouselPreview from "@/components/carousel-preview"
@@ -54,16 +55,30 @@ export default function CarouselGenerator() {
     useCustomColors: false,
     customColors: ["#3B82F6", "#8B5CF6", "#EC4899"],
     fontSize: {
-      title: "text-2xl",
+      title: "text-5xl", // Increased from 4xl to 5xl for extra-large
       subtitle: "text-lg",
       content: "text-base",
     },
     fontFamily: "font-sans",
-    slideLayout: "centered",
+    slideLayout: "standard",
   });
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const pdfSlidesRef = useRef<HTMLDivElement>(null);
 
+  const handleUserProfileChange = (updates: Partial<UserProfile>) => {
+    const newProfile = { ...userProfile, ...updates };
+    setUserProfile(newProfile);
+
+    // Also update all slides with the new profile info
+    setSlides(prevSlides =>
+      prevSlides.map(slide => ({
+        ...slide,
+        author: newProfile.name,
+        handle: newProfile.handle,
+        avatar: newProfile.avatar,
+      }))
+    );
+  };
   // 2. Only load data and render UI after client-side hydration
   useEffect(() => {
     // This runs only on the client
@@ -103,7 +118,7 @@ export default function CarouselGenerator() {
 
 Given a topic or a paragraph, generate a carousel in the following format:
 
-- The **first slide** is a dynamic "hook" slide. Generate a catchy, attention-grabbing heading and a compelling subheading that are highly relevant to the user's topic or paragraph. The "content" field must be empty.
+- The **first slide** is a dynamic "hook" slide. Generate a catchy, attention-grabbing heading (maximum 5 words) and a compelling subheading that are highly relevant to the user's topic or paragraph. The "content" field must be empty.
 - The **middle slides** (slides 2 to N-2) each represent a single point, tip, or step. Each should have a title, subtitle, and detailed content.
 - The **last two slides** are "section finishing" slides:
     - The **penultimate slide** (second to last) should be a summary or key takeaway slide, summarizing the main points or providing a final important insight.
@@ -114,7 +129,7 @@ If the user provides a paragraph, extract the main idea for the hook slide, then
 Respond ONLY with a valid JSON object:
 {
   "slides": [
-    { "heading": "Dynamic Hook Title", "subheading": "Dynamic Hook Subtitle", "content": "" },
+    { "heading": "Dynamic Hook Title (max 5 words)", "subheading": "Dynamic Hook Subtitle", "content": "" },
     { "heading": "Point 1 Title", "subheading": "Point 1 Subtitle", "content": "Point 1 Content" },
     ...
     { "heading": "Summary Title", "subheading": "Summary Subtitle", "content": "Summary Content" },
@@ -481,22 +496,26 @@ Do not include any explanations, markdown, or text outside the JSON.`;
             {/* Tabs */}
             <div className="border-b px-2 sm:px-6 pt-6 bg-white rounded-t-2xl">
               {/* Responsive Tab Nav: horizontally scrollable on tablet and below */}
-              <nav className="flex flex-nowrap overflow-x-auto space-x-1 p-2 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 rounded-xl shadow animate-fadeIn scrollbar-hide">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 transform focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 flex-shrink-0
-                      ${activeTab === tab.id
-                        ? "bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 text-blue-700 scale-105 shadow-lg animate-floatSoft"
-                        : "text-gray-600 hover:text-blue-700 hover:bg-blue-50 hover:scale-105"}
-                    `}
-                  >
-                    <tab.icon className="w-4 h-4 mr-2" />
-                    {tab.label}
-                  </button>
-                ))}
+              <nav className="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
+                <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0
+          focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1
+          ${activeTab === tab.id
+                          ? "bg-blue-600 text-white shadow-sm transition-colors duration-200"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 transition-colors duration-200"
+                        }`}
+                    >
+                      <tab.icon className="w-5 h-5" />
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </nav>
+
             </div>
             {/* Tab Content */}
             <div className="flex-1 p-8 overflow-y-auto animate-fadeIn">
@@ -521,10 +540,7 @@ Do not include any explanations, markdown, or text outside the JSON.`;
                             if (file) {
                               try {
                                 const resized = await resizeImage(file, 96); // 96px max
-                                setUserProfile({
-                                  ...userProfile,
-                                  avatar: resized,
-                                });
+                                handleUserProfileChange({ avatar: resized });
                               } catch (err: any) {
                                 alert(err.message || "Failed to process image.");
                               }
@@ -537,14 +553,14 @@ Do not include any explanations, markdown, or text outside the JSON.`;
                     <input
                       type="text"
                       value={userProfile.name}
-                      onChange={e => setUserProfile({ ...userProfile, name: e.target.value })}
+                      onChange={e => handleUserProfileChange({ name: e.target.value })}
                       className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     <label className="block text-sm font-medium text-gray-700 mb-1">Profile ID</label>
                     <input
                       type="text"
                       value={userProfile.handle}
-                      onChange={e => setUserProfile({ ...userProfile, handle: e.target.value })}
+                      onChange={e => handleUserProfileChange({ handle: e.target.value })}
                       className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="@username"
                     />
@@ -667,15 +683,15 @@ Do not include any explanations, markdown, or text outside the JSON.`;
                 </div>
               ))}
               {/* Add new slide card */}
-              {/* <button
+              <button
                 className="flex-shrink-0 w-40 h-40 md:w-44 md:h-44 flex flex-col items-center justify-center border-2 border-dashed border-blue-400 rounded-xl bg-blue-50 hover:bg-blue-100 transition group focus:outline-none hover:scale-105"
-              onClick={addSlide}
-              title="Add new slide"
+                onClick={addSlide}
+                title="Add new slide"
                 style={{ aspectRatio: '9/16', minWidth: 80, maxWidth: 120 }}
-            >
+              >
                 <span className="text-2xl md:text-3xl text-blue-400 group-hover:text-blue-600">+</span>
                 <span className="mt-1 text-xs md:text-sm text-blue-500 font-medium">Add Slide</span>
-              </button> */}
+              </button>
             </div>
           </div>
         </div>

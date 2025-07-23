@@ -35,12 +35,43 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
   }
 
   const fontSizeOptions = [
+    
+    
+    { value: "text-3xl", label: "Small" },
+    { value: "text-4xl", label: "Large" },
+    { value: "text-5xl", label: "Extra Large" },
+    { value: "text-6xl", label: "2X Large" },
+    { value: "text-7xl", label: "3X Large" },
+    // { value: "text-8xl", label: "4X Large" },
+    // { value: "text-9xl", label: "5X Large" },
+    // { value: "text-10xl", label: "6X Large" },
+  ]
+
+  
+  const fontSizeOptions1 = [
+    
+    
+    { value: "text-lg", label: "Small" },
+    { value: "text-xl", label: "Large" },
+    { value: "text-2xl", label: "Extra Large" },
+    { value: "text-3xl", label: "2X Large" },
+    { value: "text-4xl", label: "3X Large" },
+    // { value: "text-8xl", label: "4X Large" },
+    // { value: "text-9xl", label: "5X Large" },
+    // { value: "text-10xl", label: "6X Large" },
+  ]
+  
+  const fontSizeOptions2 = [
+    
+    
     { value: "text-sm", label: "Small" },
-    { value: "text-base", label: "Medium" },
+    { value: "text-md", label: "Medium" },
     { value: "text-lg", label: "Large" },
-    { value: "text-xl", label: "Extra Large" },
-    { value: "text-2xl", label: "2X Large" },
-    { value: "text-3xl", label: "3X Large" },
+    
+    
+    // { value: "text-8xl", label: "4X Large" },
+    // { value: "text-9xl", label: "5X Large" },
+    // { value: "text-10xl", label: "6X Large" },
   ]
 
   const fontFamilyOptions = [
@@ -129,7 +160,7 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
                 onChange={(e) => updateFontSize("subtitle", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                {fontSizeOptions.map((option) => (
+                {fontSizeOptions1.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -144,7 +175,7 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
                 onChange={(e) => updateFontSize("content", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                {fontSizeOptions.map((option) => (
+                {fontSizeOptions2.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
