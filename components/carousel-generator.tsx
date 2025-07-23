@@ -211,7 +211,7 @@ Do not include any explanations, markdown, or text outside the JSON.`;
     { id: "Export", icon: Download, label: "Export" },
   ]
 
-  const renderTabContent = () => { 
+  const renderTabContent = () => {
     switch (activeTab) {
       case "Content":
         return (
