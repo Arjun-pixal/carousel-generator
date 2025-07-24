@@ -27,7 +27,7 @@ export default function ThemePanel({ designSettings, onSettingsChange }: ThemePa
 
   const backgroundElements = [
     { value: "dots", label: "Dots" },
-    { value: "grid", label: "Grid" },
+    // { value: "grid", label: "Grid" },
     { value: "waves", label: "Waves" },
     { value: "circles", label: "Circles" },
     { value: "triangles", label: "Triangles" },
@@ -110,67 +110,67 @@ export default function ThemePanel({ designSettings, onSettingsChange }: ThemePa
             </label>
           </div>
           {!designSettings.useCustomColors ? (
-  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
-    {colorPalettes.map((palette, idx) => (
-      <button
-        key={palette.name}
-        onClick={() => updateSettings({ colorPalette: idx })}
-        className={
-          "relative p-1 border flex items-center w-full h-10 shadow-sm transition rounded " +
-          (designSettings.colorPalette === idx
-            ? "border-blue-500 ring-2 ring-blue-200 shadow-lg"
-            : "border-gray-200 bg-gray-200 hover:border-blue-300")
-        }
-      >
-        <div className="flex w-full h-6 overflow-hidden rounded">
-          {palette.colors.map((color, i) => (
-            <div
-              key={i}
-              className="flex-1 h-full"
-              style={{ backgroundColor: color }}
-            />
-          ))}
-        </div>
-      </button>
-    ))}
-  </div>
-) : (
-  <div className="space-y-4">
-    <div className="flex flex-wrap gap-4">
-      {designSettings.customColors.map((color, index) => {
-        const labels = ["Primary", "Secondary", "Accent"]
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+              {colorPalettes.map((palette, idx) => (
+                <button
+                  key={palette.name}
+                  onClick={() => updateSettings({ colorPalette: idx })}
+                  className={
+                    "relative p-1 border flex items-center w-full h-10 shadow-sm transition rounded " +
+                    (designSettings.colorPalette === idx
+                      ? "border-blue-500 ring-2 ring-blue-200 shadow-lg"
+                      : "border-gray-200 bg-gray-200 hover:border-blue-300")
+                  }
+                >
+                  <div className="flex w-full h-6 overflow-hidden rounded">
+                    {palette.colors.map((color, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 h-full"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-4">
+                {designSettings.customColors.map((color, index) => {
+                  const labels = ["Primary", "Secondary", "Accent"]
 
-        return (
-          <div key={index} className="flex items-start gap-2 w-full sm:w-auto">
-            <div className="flex flex-col items-start space-y-1">
-              <label className="text-sm text-gray-700 font-medium">
-                {labels[index] || `Color ${index + 1}`}
-              </label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => {
-                    const newColors = [...designSettings.customColors]
-                    newColors[index] = e.target.value
-                    updateSettings({ customColors: newColors })
-                  }}
-                  className="w-10 h-10 border border-gray-300 rounded cursor-pointer"
-                />
-                <input
-                  type="text"
-                  value={color}
-                  readOnly
-                  className="w-24 px-2 py-1 text-sm border border-gray-300 rounded bg-gray-50 text-gray-800"
-                />
+                  return (
+                    <div key={index} className="flex items-start gap-2 w-full sm:w-auto">
+                      <div className="flex flex-col items-start space-y-1">
+                        <label className="text-sm text-gray-700 font-medium">
+                          {labels[index] || `Color ${index + 1}`}
+                        </label>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="color"
+                            value={color}
+                            onChange={(e) => {
+                              const newColors = [...designSettings.customColors]
+                              newColors[index] = e.target.value
+                              updateSettings({ customColors: newColors })
+                            }}
+                            className="w-10 h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                          <input
+                            type="text"
+                            value={color}
+                            readOnly
+                            className="w-24 px-2 py-1 text-sm border border-gray-300 rounded bg-gray-50 text-gray-800"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
-          </div>
-        )
-      })}
-    </div>
-  </div>
-)}
+          )}
 
 
         </div>

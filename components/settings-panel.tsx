@@ -35,8 +35,8 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
   }
 
   const fontSizeOptions = [
-    
-    
+
+
     { value: "text-3xl", label: "Small" },
     { value: "text-4xl", label: "Large" },
     { value: "text-5xl", label: "Extra Large" },
@@ -47,10 +47,10 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
     // { value: "text-10xl", label: "6X Large" },
   ]
 
-  
+
   const fontSizeOptions1 = [
-    
-    
+
+
     { value: "text-lg", label: "Small" },
     { value: "text-xl", label: "Large" },
     { value: "text-2xl", label: "Extra Large" },
@@ -60,15 +60,15 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
     // { value: "text-9xl", label: "5X Large" },
     // { value: "text-10xl", label: "6X Large" },
   ]
-  
+
   const fontSizeOptions2 = [
-    
-    
+
+
     { value: "text-sm", label: "Small" },
     { value: "text-md", label: "Medium" },
     { value: "text-lg", label: "Large" },
-    
-    
+
+
     // { value: "text-8xl", label: "4X Large" },
     // { value: "text-9xl", label: "5X Large" },
     // { value: "text-10xl", label: "6X Large" },
@@ -92,7 +92,7 @@ export default function SettingsPanel({ designSettings, onSettingsChange }: Sett
   const layoutOptions = [
     { value: "centered", label: "Centered" },
     { value: "standard", label: "Standard" },
-    {value: "right-aligned", label:"Right Aligned"}
+    { value: "right-aligned", label: "Right Aligned" }
     // { value: "left-aligned", label: "Left Aligned" },
     // { value: "minimal", label: "Minimal" },
   ]

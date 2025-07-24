@@ -70,7 +70,7 @@ export default function CarouselPreview({
     ["#0F172A", "#1E3A8A", "#ECFEFF"], // Deep Navy + Blue + Pale Cyan 7
     ["#F43F5E", "#0F172A", "#FEF2F2"], // Rose + Light Rose + Blush 8
     // ["#78350F", "#D6D3D1", "#E7E5E4"], // Brown + Grayish + Off-white 9
-    ["#4338CA","#3B82F6","#BFDBFE"], // Deep Purple + Blue + Pale Blue 10
+    ["#4338CA", "#3B82F6", "#BFDBFE"], // Deep Purple + Blue + Pale Blue 10
     ["#B91C1C", "#991B1B", "#FEE2E2"], // Red + Deep Red + Light Pink 11
     ["#1E293B", "#3B82F6", "#E0F2FE"], // Slate + Blue + Pale Blue 12
     ["#F59E0B", "#10B981", "#FEFCE8"], // Amber + Emerald + Light Yellow 13
@@ -86,7 +86,7 @@ export default function CarouselPreview({
     ["#9333EA", "#8B5CF6", "#E9D5FF"], // Violet + Purple + Lilac 23
     // ["#7C2D12", "#A16207", "#FDE68A"], // Brown + Gold + Pale Yellow 24
   ];
-  
+
 
 
   const currentColors = designSettings.useCustomColors
@@ -126,52 +126,121 @@ export default function CarouselPreview({
        * Case for rendering dots pattern
        * @returns {JSX.Element} Dots pattern
        */
-      case "dots":
+      case "dots": {
         return (
           <div className="absolute inset-0 pointer-events-none z-0">
-            {/* Top-right dots (expanded diagonal pattern) */}
-
-            <div className="absolute top-0 right-0 p-6 rotate-45 opacity-40 scale-110">
+            {/* Top-right dots (existing) */}
+            <div className="absolute top-[-30px] right-[-30px] p-6 rotate-45 opacity-40 scale-110">
               <div className="grid grid-cols-10 gap-3">
                 {[...Array(80)].map((_, i) => (
                   <span
                     key={`top-dot-${i}`}
                     className="w-2 h-2 rounded-full"
-                    style={{
-                      backgroundColor: currentColors[0],
-                    }}
+                    style={{ backgroundColor: currentColors[0] }}
                   />
                 ))}
               </div>
             </div>
-            <div className="absolute top-50 right-0 p-6 rotate-45 opacity-30 scale-110">
+
+            <div className="absolute top-1/2 right-0 p-6 rotate-45 opacity-30 scale-110">
               <div className="grid grid-cols-15 gap-2">
                 {[...Array(225)].map((_, i) => (
                   <span
-                    key={`top-dot-${i}`}
+                    key={`top-diag-dot-${i}`}
                     className="w-1.5 h-1.5 rounded-full"
-                    style={{
-                      backgroundColor: currentColors[0],
-                    }}
+                    style={{ backgroundColor: currentColors[0] }}
                   />
                 ))}
               </div>
-
             </div>
-            {/* Bottom dots strip (more dots, tighter spacing) */}
+
+            {/* Bottom horizontal strip (existing) */}
             <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 flex justify-center space-x-1 opacity-60">
               {[...Array(50)].map((_, i) => (
                 <span
                   key={`bottom-dot-${i}`}
                   className="w-1.5 h-3 rounded-full"
-                  style={{
-                    backgroundColor: currentColors[0],
-                  }}
+                  style={{ backgroundColor: currentColors[0] }}
                 />
               ))}
             </div>
+
+            {/* Top-left dots (NEW) */}
+            {/* <div className="absolute top-0 left-0 p-6 -rotate-45 opacity-35 scale-110">
+              <div className="grid grid-cols-8 gap-3">
+                {[...Array(64)].map((_, i) => (
+                  <span
+                    key={`top-left-dot-${i}`}
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: currentColors[1] || currentColors[0] }}
+                  />
+                ))}
+              </div>
+            </div> */}
+
+            {/* Center floating cluster (NEW) */}
+            <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 opacity-20">
+              <div className="grid grid-cols-6 gap-2">
+                {[...Array(36)].map((_, i) => (
+                  <span
+                    key={`center-dot-${i}`}
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: currentColors[2] || currentColors[0] }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Left vertical line of dots (NEW) */}
+            {/* <div className="absolute top-1/4 left-0 h-2/3 px-2 flex flex-col justify-between opacity-25">
+              {[...Array(20)].map((_, i) => (
+                <span
+                  key={`left-vert-dot-${i}`}
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: currentColors[0] }}
+                />
+              ))}
+            </div> */}
+
+            {/* Right vertical line of dots (NEW) */}
+            {/* <div className="absolute top-1/4 right-0 h-2/3 px-2 flex flex-col justify-between opacity-25">
+              {[...Array(20)].map((_, i) => (
+                <span
+                  key={`right-vert-dot-${i}`}
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: currentColors[0] }}
+                />
+              ))}
+            </div> */}
+
+            {/* Bottom-left small scatter (NEW) */}
+            <div className="absolute bottom-10 right-10 opacity-2">
+              <div className="grid grid-cols-4 gap-1">
+                {[...Array(16)].map((_, i) => (
+                  <span
+                    key={`scatter-right-dot-${i}`}
+                    className="w-1 h-1 rounded-full"
+                    style={{ backgroundColor: currentColors[1] || currentColors[0] }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom-right small scatter (NEW) */}
+            <div className="absolute bottom-10 right-10 opacity-2">
+              <div className="grid grid-cols-4 gap-1">
+                {[...Array(16)].map((_, i) => (
+                  <span
+                    key={`scatter-right-dot-${i}`}
+                    className="w-1 h-1 rounded-full"
+                    style={{ backgroundColor: currentColors[2] || currentColors[0] }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         );
+      }
 
       case "blobs":
         return (
@@ -233,48 +302,7 @@ export default function CarouselPreview({
           </div>
         );
 
-      case "grid":
-        return (
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="grid grid-cols-8 grid-rows-8 gap-4 opacity-30">
-              {[...Array(64)].map((_, i) => (
-                <span
-                  key={i}
-                  className="w-4 h-4 rounded-sm"
-                  style={{
-                    background: currentColors[1],
-                    transform: `translate(${i % 8 * 20}px, ${Math.floor(i / 8) * 20}px)`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        );
-        return (
-          <div className="absolute inset-0 opacity-50 pointer-events-none">
-            <div
-              className="w-full h-full"
-              style={{
-                backgroundImage: `
-                  linear-gradient(${currentColors[0]} 1px, transparent 1px),
-                  linear-gradient(90deg, ${currentColors[0]} 1px, transparent 1px)`,
-                backgroundSize: "25px 25px",
-                backgroundPosition: "0 0"
-              }}
-            >
-              {/* Add intersection dots for better visual effect */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: `radial-gradient(circle at center, ${currentColors[0]} 1px, transparent 1px)`,
-                  backgroundSize: "25px 25px",
-                  backgroundPosition: "0 0",
-                  opacity: 0.8
-                }}
-              />
-            </div>
-          </div>
-        );
+
       case "waves":
         return (
           <div className="absolute inset-0 opacity-50 pointer-events-none">
@@ -418,10 +446,10 @@ export default function CarouselPreview({
 
             {/* Large background circles with borders */}
             {[...Array(8)].map((_, i) => {
-              const size = 60 + Math.random() * 80;
-              const top = `${Math.random() * 80}%`;
-              const left = `${Math.random() * 80}%`;
-              const borderWidth = 1 + Math.random() * 3;
+              const size = 60 + Math.random();
+              const top = `${Math.random()}%`;
+              const left = `${Math.random()}`;
+              const borderWidth = 1 + Math.random();
 
               return (
                 <div
@@ -441,10 +469,10 @@ export default function CarouselPreview({
 
             {/* Medium circles with fills */}
             {[...Array(12)].map((_, i) => {
-              const size = 20 + Math.random() * 40;
-              const top = `${Math.random() * 90}%`;
-              const left = `${Math.random() * 90}%`;
-              const isFilled = Math.random() > 0.5;
+              const size = 20 + Math.random();
+              const top = `${Math.random()}`;
+              const left = `${Math.random()}`;
+              const isFilled = Math.random();
 
               return (
                 <div
@@ -467,9 +495,9 @@ export default function CarouselPreview({
 
             {/* Small dot circles */}
             {[...Array(20)].map((_, i) => {
-              const size = 3 + Math.random() * 8;
-              const top = `${Math.random() * 100}%`;
-              const left = `${Math.random() * 100}%`;
+              const size = 3 + Math.random();
+              const top = `${Math.random()}`;
+              const left = `${Math.random()}`;
 
               return (
                 <div
@@ -705,9 +733,9 @@ export default function CarouselPreview({
 
             {/* Micro dots pattern */}
             {[...Array(15)].map((_, i) => {
-              const size = 2 + Math.random() * 4;
-              const top = `${Math.random() * 100}%`;
-              const left = `${Math.random() * 100}%`;
+              const size = 2 + Math.random() * 1;
+              const top = `${Math.random() * 1}%`;
+              const left = `${Math.random() * 1}%`;
 
               return (
                 <div
@@ -781,10 +809,11 @@ export default function CarouselPreview({
           <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
             {/* Large background triangles */}
             {[...Array(6)].map((_, i) => {
-              const size = 80 + Math.random() * 120;
-              const top = `${Math.random() * 90}%`;
-              const left = `${Math.random() * 90}%`;
-              const rotate = `${Math.random() * 360}deg`;
+
+              const size = 80 + Math.random();
+              const top = `${Math.random()}`;
+              const left = `${Math.random()}`;
+              const rotate = `${Math.random()}`;
 
               return (
                 <div
@@ -796,7 +825,7 @@ export default function CarouselPreview({
                     width: 0,
                     height: 0,
                     opacity: 0.05,
-                    transform: `rotate(${rotate})`,
+
                     borderLeft: `${size / 2}px solid transparent`,
                     borderRight: `${size / 2}px solid transparent`,
                     borderBottom: `${size}px solid ${currentColors[0]}`,
@@ -807,37 +836,7 @@ export default function CarouselPreview({
             })}
 
             {/* Small triangles scattered around */}
-            {[...Array(12)].map((_, i) => {
-              const size = 4 + Math.random() * 8;
-              const top = `${Math.random() * 100}%`;
-              const left = `${Math.random() * 100}%`;
-              const rotation = Math.random() * 360;
-              const isUpward = Math.random() > 0.5;
 
-              return (
-                <div
-                  key={`small-triangle-${i}`}
-                  className="absolute"
-                  style={{
-                    left: `${left}`,
-                    top: `${top}`,
-                    width: 0,
-                    height: 0,
-                    opacity: 0.4,
-                    transform: `rotate(${rotation}deg)`,
-                    ...(isUpward ? {
-                      borderLeft: `${size}px solid transparent`,
-                      borderRight: `${size}px solid transparent`,
-                      borderBottom: `${size * 1.5}px solid ${currentColors[1]}`,
-                    } : {
-                      borderLeft: `${size}px solid transparent`,
-                      borderRight: `${size}px solid transparent`,
-                      borderTop: `${size * 1.5}px solid ${currentColors[1]}`,
-                    })
-                  }}
-                />
-              );
-            })}
 
             {/* Medium triangles in corners */}
             <div
@@ -854,7 +853,6 @@ export default function CarouselPreview({
                 transform: "rotate(-30deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -869,7 +867,6 @@ export default function CarouselPreview({
                 transform: "rotate(45deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -884,7 +881,6 @@ export default function CarouselPreview({
                 transform: "rotate(90deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -900,6 +896,190 @@ export default function CarouselPreview({
               }}
             />
 
+            {/* small size triangles */}
+
+            {/* Small triangles manually added below */}
+            <div className="absolute" style={{
+              top: "12%",
+              left: "85%",
+              width: 0,
+              height: 0,
+              opacity: 0.2,
+              borderLeft: "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderBottom: `10px solid ${currentColors[1]}`,
+              transform: "rotate(30deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "27%",
+              left: "18%",
+              width: 0,
+              height: 0,
+              opacity: 0.18,
+              borderLeft: "4px solid transparent",
+              borderRight: "4px solid transparent",
+              borderTop: `8px solid ${currentColors[2] || currentColors[0]}`,
+              transform: "rotate(-45deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "45%",
+              left: "60%",
+              width: 0,
+              height: 0,
+              opacity: 0.22,
+              borderLeft: "6px solid transparent",
+              borderRight: "6px solid transparent",
+              borderBottom: `12px solid ${currentColors[0]}`,
+              transform: "rotate(90deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "70%",
+              left: "5%",
+              width: 0,
+              height: 0,
+              opacity: 0.15,
+              borderLeft: "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderTop: `10px solid ${currentColors[1]}`,
+              transform: "rotate(60deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "82%",
+              left: "80%",
+              width: 0,
+              height: 0,
+              opacity: 0.2,
+              borderLeft: "6px solid transparent",
+              borderRight: "6px solid transparent",
+              borderBottom: `12px solid ${currentColors[2] || currentColors[0]}`,
+              transform: "rotate(150deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "34%",
+              right: "10%",
+              width: 0,
+              height: 0,
+              opacity: 0.17,
+              borderLeft: "4px solid transparent",
+              borderRight: "4px solid transparent",
+              borderTop: `8px solid ${currentColors[1]}`,
+              transform: "rotate(210deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "22%",
+              right: "35%",
+              width: 0,
+              height: 0,
+              opacity: 0.19,
+              borderLeft: "6px solid transparent",
+              borderRight: "6px solid transparent",
+              borderBottom: `12px solid ${currentColors[0]}`,
+              transform: "rotate(315deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "88%",
+              left: "40%",
+              width: 0,
+              height: 0,
+              opacity: 0.16,
+              borderLeft: "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderTop: `10px solid ${currentColors[1]}`,
+              transform: "rotate(135deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "15%",
+              left: "25%",
+              width: 0,
+              height: 0,
+              opacity: 0.14,
+              borderLeft: "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderBottom: `10px solid ${currentColors[2] || currentColors[0]}`,
+              transform: "rotate(-90deg)"
+            }} />
+            <div className="absolute" style={{
+              bottom: "18%",
+              left: "65%",
+              width: 0,
+              height: 0,
+              opacity: 0.2,
+              borderLeft: "6px solid transparent",
+              borderRight: "6px solid transparent",
+              borderTop: `12px solid ${currentColors[0]}`,
+              transform: "rotate(300deg)"
+            }} />
+            <div className="absolute" style={{
+              bottom: "8%",
+              right: "30%",
+              width: 0,
+              height: 0,
+              opacity: 0.15,
+              borderLeft: "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderBottom: `10px solid ${currentColors[1]}`,
+              transform: "rotate(250deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "5%",
+              right: "50%",
+              width: 0,
+              height: 0,
+              opacity: 0.17,
+              borderLeft: "4px solid transparent",
+              borderRight: "4px solid transparent",
+              borderTop: `8px solid ${currentColors[2] || currentColors[1]}`,
+              transform: "rotate(75deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "60%",
+              left: "35%",
+              width: 0,
+              height: 0,
+              opacity: 0.2,
+              borderLeft: "6px solid transparent",
+              borderRight: "6px solid transparent",
+              borderBottom: `12px solid ${currentColors[1]}`,
+              transform: "rotate(45deg)"
+            }} />
+            <div className="absolute" style={{
+              top: "78%",
+              right: "15%",
+              width: 0,
+              height: 0,
+              opacity: 0.22,
+              borderLeft: "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderTop: `10px solid ${currentColors[0]}`,
+              transform: "rotate(10deg)"
+            }} />
+            <div className="absolute" style={{
+              bottom: "28%",
+              left: "28%",
+              width: 0,
+              height: 0,
+              opacity: 0.18,
+              borderLeft: "6px solid transparent",
+              borderRight: "6px solid transparent",
+              borderBottom: `12px solid ${currentColors[2] || currentColors[0]}`,
+              transform: "rotate(120deg)"
+            }} />
+
+            {/* Central focal triangle */}
+            <div
+              className="absolute"
+              style={{
+                top: "50%",
+                left: "50%",
+                width: 0,
+                height: 0,
+                opacity: 0.15,
+                borderLeft: "25px solid transparent",
+                borderRight: "25px solid transparent",
+                borderBottom: `50px solid ${currentColors[0]}`,
+                transform: "translate(-50%, -50%)",
+              }}
+            />
             {/* Additional triangles in different areas */}
             <div
               className="absolute"
@@ -915,7 +1095,6 @@ export default function CarouselPreview({
                 transform: "rotate(180deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -930,7 +1109,6 @@ export default function CarouselPreview({
                 transform: "rotate(270deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -945,7 +1123,6 @@ export default function CarouselPreview({
                 transform: "rotate(315deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -960,7 +1137,6 @@ export default function CarouselPreview({
                 transform: "rotate(60deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -975,7 +1151,6 @@ export default function CarouselPreview({
                 transform: "rotate(150deg)",
               }}
             />
-
             <div
               className="absolute"
               style={{
@@ -1007,22 +1182,10 @@ export default function CarouselPreview({
               }}
             />
           </div>
+
         );
 
-      case "pasted-image":
-        return (
-          <div className="absolute inset-0 opacity-60 pointer-events-none">
-            <img
-              src={pastedImageUrl}
-              alt="Pasted background"
-              className="w-full h-full object-cover"
-              style={{
-                mixBlendMode: "multiply",
-                filter: "brightness(0.8) contrast(1.1)"
-              }}
-            />
-          </div>
-        );
+
       case "blobs":
         return (
           <div className="absolute inset-0 pointer-events-none">
@@ -1068,8 +1231,10 @@ export default function CarouselPreview({
         <div
           className={`relative w-full h-full overflow-hidden shadow-lg ${designSettings.fontFamily} ${forceFullSize ? "" : "rounded-2xl"}`}
           style={{
-            width: forceFullSize ? 1080 : undefined,
-            height: forceFullSize ? 1080 : 500,
+            marginLeft: "auto",
+            marginRight: "auto",
+            width: forceFullSize ? 1080 : 450,
+            height: forceFullSize ? 1080 : 600,
             background: currentColors[2], // Use third color as main background
             borderRadius: forceFullSize ? 0 : undefined,
           }}
@@ -1093,9 +1258,9 @@ export default function CarouselPreview({
                   className={
                     designSettings.slideLayout === "centered"
                       ? "flex flex-col justify-center items-center text-center space-y-3"
-                        : designSettings.slideLayout === "left-aligned"
-                      ? "flex flex-col justify-center items-start text-left space-y-3"
-                      : "flex flex-col justify-center items-end text-right space-y-3"
+                      : designSettings.slideLayout === "left-aligned"
+                        ? "flex flex-col justify-center items-start text-left space-y-3"
+                        : "flex flex-col justify-center items-end text-right space-y-3"
                   }
                 >
                   <h3 className={`${designSettings.fontSize.title} font-bold leading-tight`} style={{ color: currentColors[0] }}>{slide.title}</h3>

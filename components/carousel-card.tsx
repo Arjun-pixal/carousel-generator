@@ -69,42 +69,7 @@ export default function CarouselCard({
             </div>
           </>
         );
-      case "Grid":
-        // Aligned grid lines using absolutely positioned divs
-        return (
-          <>
-            <div className={patternClass} style={{ opacity: 0.18 }}>
-              {/* Vertical lines */}
-              {[...Array(7)].map((_, i) => (
-                <div
-                  key={`v${i}`}
-                  className="absolute bg-gray-400"
-                  style={{
-                    left: `${((i + 1) * 100) / 8}%`,
-                    top: 0,
-                    width: "1px",
-                    height: "100%",
-                    background: designElementColor,
-                  }}
-                />
-              ))}
-              {/* Horizontal lines */}
-              {[...Array(7)].map((_, i) => (
-                <div
-                  key={`h${i}`}
-                  className="absolute bg-gray-400"
-                  style={{
-                    top: `${((i + 1) * 100) / 8}%`,
-                    left: 0,
-                    height: "1px",
-                    width: "100%",
-                    background: designElementColor,
-                  }}
-                />
-              ))}
-            </div>
-          </>
-        );
+
       case "Triangles":
         return (
           <>
@@ -112,17 +77,17 @@ export default function CarouselCard({
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="absolute w-0 h-0 border-l-[8px] border-r-[8px] border-b-[14px] border-transparent border-b-white animate-bounceTriangle"
+                  className="absolute w-0 h-0 border-l-[8px] border-r-[8px] border-b-[14px] border-transparent border-b-white"
                   style={{
-                    top: `${Math.random() * 90}%`,
-                    left: `${Math.random() * 90}%`,
-                    transform: `rotate(${i * 60}deg)`,
-                    animationDelay: `${i * 0.3}s`,
+                    top: `${Math.random()}`,
+                    left: `${Math.random()}`,
+                    transform: `rotate(${i})`,
+                    animationDelay: `${i}`,
                   }}
                 ></div>
               ))}
             </div>
-            <style jsx>{`
+            {/* <style jsx>{`
               @keyframes bounceTriangle {
                 0%, 100% { transform: scale(1) rotate(0deg); }
                 50% { transform: scale(1.3) rotate(15deg); }
@@ -130,7 +95,7 @@ export default function CarouselCard({
               .animate-bounceTriangle {
                 animation: bounceTriangle 3s ease-in-out infinite;
               }
-            `}</style>
+            `}</style> */}
           </>
         );
 
@@ -290,7 +255,7 @@ export default function CarouselCard({
               disabled
             >
               {/* Left Arrow SVG */}
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 17l-5-5 5-5"/></svg>
+              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 17l-5-5 5-5" /></svg>
             </button>
             <button
               className="pointer-events-auto bg-white/70 hover:bg-white text-gray-700 rounded-full w-10 h-10 flex items-center justify-center shadow transition"
@@ -298,7 +263,7 @@ export default function CarouselCard({
               disabled
             >
               {/* Right Arrow SVG */}
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 7l5 5-5 5"/></svg>
+              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 7l5 5-5 5" /></svg>
             </button>
           </div>
         )}

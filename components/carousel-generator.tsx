@@ -118,25 +118,29 @@ export default function CarouselGenerator() {
 
 Given a topic or a paragraph, generate a carousel in the following format:
 
-- The **first slide** is a dynamic "hook" slide. Generate a catchy, attention-grabbing heading (maximum 5 words) and a compelling subheading that are highly relevant to the user's topic or paragraph. The "content" field must be empty.
-- The **middle slides** (slides 2 to N-2) each represent a single point, tip, or step. Each should have a title, subtitle, and detailed content.
+- The **first slide** is a dynamic "hook" slide. Generate a catchy, attention-grabbing heading (maximum 5 words) with an appropriate emoji at the beginning. The subheading should be compelling and highly relevant to the user's topic or paragraph. The "content" field must be empty.
+- The **middle slides** (slides 2 to N-2) each represent a single point, tip, or step. Each should have:
+  - a title with an appropriate emoji at the beginning,
+  - a subtitle,
+  - and detailed content.
 - The **last two slides** are "section finishing" slides:
-    - The **penultimate slide** (second to last) should be a summary or key takeaway slide, summarizing the main points or providing a final important insight.
-    - The **final slide** should be a call to action or motivational wrap-up, encouraging the user to apply what they've learned or take the next step.
+  - The **penultimate slide** (second to last) should summarize the key takeaways, with an emoji at the start of the heading.
+  - The **final slide** should include a motivational or action-based heading with an emoji, a motivating subtitle, and a short call-to-action message.
 
 If the user provides a paragraph, extract the main idea for the hook slide, then break the rest into points for the following slides.
 
 Respond ONLY with a valid JSON object:
 {
   "slides": [
-    { "heading": "Dynamic Hook Title (max 5 words)", "subheading": "Dynamic Hook Subtitle", "content": "" },
-    { "heading": "Point 1 Title", "subheading": "Point 1 Subtitle", "content": "Point 1 Content" },
+    { "heading": "🚀 Hook Title", "subheading": "Dynamic Hook Subtitle", "content": "" },
+    { "heading": "💡 Point 1 Title", "subheading": "Point 1 Subtitle", "content": "Point 1 Content" },
     ...
-    { "heading": "Summary Title", "subheading": "Summary Subtitle", "content": "Summary Content" },
-    { "heading": "Call to Action Title", "subheading": "Motivational Subtitle", "content": "Short, motivating message" }
+    { "heading": "🧠 Summary Title", "subheading": "Summary Subtitle", "content": "Summary Content" },
+    { "heading": "🔥 Call to Action", "subheading": "Motivational Subtitle", "content": "Short, motivating message" }
   ]
 }
 Do not include any explanations, markdown, or text outside the JSON.`;
+
       const userPrompt = prompt;
 
       const geminiPayload = {
@@ -460,8 +464,8 @@ Do not include any explanations, markdown, or text outside the JSON.`;
         {/* Side-by-side main area, responsive */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-8 w-full min-h-[500px]">
           {/* Live Preview (left, slightly smaller) */}
-          <div className="w-full md:flex-[0.9] min-h-[300px] md:min-h-[700px] h-auto md:h-[650px] bg-white rounded-xl shadow-md p-2 md:p-6 flex flex-col justify-between mb-4 md:mb-0 transition-all duration-300">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Live Preview</h3>
+          <div className="w-full min-h-[300px] h-auto bg-white rounded-xl shadow-md p-2 flex flex-col  overflow-x-hidden justify-between mb-4 transition-all duration-300">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">Live Preview</h3>
             {(() => { console.log('Live Preview selectedSlideIndex:', selectedSlideIndex, 'slide:', slides[selectedSlideIndex]); return null })()}
             {slides.length > 0 ? (
               <>
@@ -492,11 +496,11 @@ Do not include any explanations, markdown, or text outside the JSON.`;
             )}
           </div>
           {/* Tabbed Controls (right, slightly larger, scrollable) */}
-          <div className="w-full md:flex-[1.1] min-h-[300px] md:min-h-[700px] h-auto md:h-[650px] bg-white rounded-xl shadow-md p-0 flex flex-col overflow-auto transition-all duration-300">
+          <div className="w-full min-h-[300px] h-auto  bg-white rounded-xl shadow-md p-0 flex flex-col overflow-y-auto overflow-x-hidden transition-all duration-300">
             {/* Tabs */}
             <div className="border-b px-2 sm:px-6 pt-6 bg-white rounded-t-2xl">
               {/* Responsive Tab Nav: horizontally scrollable on tablet and below */}
-              <nav className="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
+              <nav className="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200  dark:border-gray-800 rounded-xl shadow-sm">
                 <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide">
                   {tabs.map((tab) => (
                     <button
